@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/aws/aws-cdk-go/awscdk"
-	"github.com/aws/aws-cdk-go/awscdk/awssns"
+	"github.com/aws/aws-cdk-go/awscdk/awscloudfront"
 	"github.com/aws/constructs-go/constructs/v3"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -19,11 +19,27 @@ func NewAwsCdkGoCloudfrontFunctionStack(scope constructs.Construct, id string, p
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
 	// The code that defines your stack goes here
+	myFunction := `function handler(event) {
+		var request = event.request;
+		var uri = request.uri;
+	
+		// Check whether the URI is missing a file name.
+		if (uri.endsWith('/')) {
+			request.uri += 'index.html';
+		}
+		// Check whether the URI is missing a file extension.
+		else if (!uri.includes('.')) {
+			request.uri += '/index.html';
+		}
+		return request;
+	}`
 
-	// as an example, here's how you would define an AWS SNS topic:
-	awssns.NewTopic(stack, jsii.String("MyTopic"), &awssns.TopicProps{
-		DisplayName: jsii.String("MyCoolTopic"),
-	})
+	awscloudfront.NewFunction(stack, jsii.String("CDKCloudfrontFunction"), &awscloudfront.FunctionProps{
+		FunctionName: jsii.String("update-blog-url"),
+		Code:         awscloudfront.FunctionCode(awscloudfront.FunctionCode_FromInline(jsii.String(myFunction))),
+		Comment:      jsii.String("CDK-generated CloudFrontFunction"),
+	},
+	)
 
 	return stack
 }
