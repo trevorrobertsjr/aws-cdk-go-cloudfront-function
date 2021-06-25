@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/aws/aws-cdk-go/awscdk"
-	"github.com/aws/aws-cdk-go/awscdk/awscloudfront"
-	"github.com/aws/constructs-go/constructs/v3"
+	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awscloudfront"
+	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
 
@@ -34,7 +34,7 @@ func NewAwsCdkGoCloudfrontFunctionStack(scope constructs.Construct, id string, p
 		return request;
 	}`
 
-	awscloudfront.NewFunction(stack, jsii.String("CDKCloudfrontFunction"), &awscloudfront.FunctionProps{
+	awscloudfront.NewFunction(stack, jsii.String("CDKCloudfrontFn"), &awscloudfront.FunctionProps{
 		FunctionName: jsii.String("update-blog-url"),
 		Code:         awscloudfront.FunctionCode(awscloudfront.FunctionCode_FromInline(jsii.String(myFunction))),
 		Comment:      jsii.String("CDK-generated CloudFrontFunction"),
